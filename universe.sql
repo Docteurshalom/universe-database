@@ -52,7 +52,9 @@ CREATE TABLE public.galaxy (
     name character varying(30) NOT NULL,
     galaxy_types text,
     distance_from_earth bigint,
-    number_of_stars bigint
+    number_of_stars bigint,
+    has_life boolean,
+    is_spherical boolean
 );
 
 
@@ -167,7 +169,8 @@ CREATE TABLE public.star (
     mass numeric(5,3),
     temperature integer,
     luminosity integer,
-    starsystem_id integer NOT NULL
+    starsystem_id integer NOT NULL,
+    galaxy_id integer
 );
 
 
@@ -271,12 +274,12 @@ ALTER TABLE ONLY public.starsystem ALTER COLUMN starsystem_id SET DEFAULT nextva
 -- Data for Name: galaxy; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.galaxy VALUES (1, 'Milky Way', 'Spiral', 0, 250000000000);
-INSERT INTO public.galaxy VALUES (2, 'Andromeda', 'Spiral', 2537000, 1000000000000);
-INSERT INTO public.galaxy VALUES (3, 'Triangulum', 'Spiral', 3000000, 40000000000);
-INSERT INTO public.galaxy VALUES (4, 'Large Magellanic Cloud', 'Irregular', 163000, 30000000000);
-INSERT INTO public.galaxy VALUES (5, 'Small Magellanic Cloud', 'Irregular', 200000, 10000000000);
-INSERT INTO public.galaxy VALUES (6, 'Whirlpool', 'Spiral', 23000000, 100000000000);
+INSERT INTO public.galaxy VALUES (1, 'Milky Way', 'Spiral', 0, 250000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (2, 'Andromeda', 'Spiral', 2537000, 1000000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (3, 'Triangulum', 'Spiral', 3000000, 40000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (4, 'Large Magellanic Cloud', 'Irregular', 163000, 30000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (5, 'Small Magellanic Cloud', 'Irregular', 200000, 10000000000, NULL, NULL);
+INSERT INTO public.galaxy VALUES (6, 'Whirlpool', 'Spiral', 23000000, 100000000000, NULL, NULL);
 
 
 --
@@ -328,12 +331,12 @@ INSERT INTO public.planet VALUES (24, 'M33 Planet 2', 'Gas Giant', 300.0, 1400.0
 -- Data for Name: star; Type: TABLE DATA; Schema: public; Owner: freecodecamp
 --
 
-INSERT INTO public.star VALUES (2, 'Sun', 'G-Type Main-Sequence', 1.000, 5778, 1, 1);
-INSERT INTO public.star VALUES (3, 'Alpha Centauri A', 'G-Type Main-Sequence', 1.100, 5790, 2, 2);
-INSERT INTO public.star VALUES (4, 'Alpha Centauri B', 'K-Type Main-Sequence', 0.900, 5260, 1, 2);
-INSERT INTO public.star VALUES (5, 'Andromeda Star 1', 'Giant', 4.000, 4500, 100, 3);
-INSERT INTO public.star VALUES (6, 'M32 Star', 'Dwarf', 0.800, 3000, 0, 4);
-INSERT INTO public.star VALUES (7, 'M33 Star', 'Supergiant', 10.000, 20000, 10000, 5);
+INSERT INTO public.star VALUES (2, 'Sun', 'G-Type Main-Sequence', 1.000, 5778, 1, 1, 1);
+INSERT INTO public.star VALUES (3, 'Alpha Centauri A', 'G-Type Main-Sequence', 1.100, 5790, 2, 2, 1);
+INSERT INTO public.star VALUES (4, 'Alpha Centauri B', 'K-Type Main-Sequence', 0.900, 5260, 1, 2, 1);
+INSERT INTO public.star VALUES (5, 'Andromeda Star 1', 'Giant', 4.000, 4500, 100, 3, 2);
+INSERT INTO public.star VALUES (6, 'M32 Star', 'Dwarf', 0.800, 3000, 0, 4, 2);
+INSERT INTO public.star VALUES (7, 'M33 Star', 'Supergiant', 10.000, 20000, 10000, 5, 2);
 
 
 --
@@ -477,6 +480,14 @@ ALTER TABLE ONLY public.moon
 
 ALTER TABLE ONLY public.planet
     ADD CONSTRAINT planet_star_id_fkey FOREIGN KEY (star_id) REFERENCES public.star(star_id);
+
+
+--
+-- Name: star star_galaxy_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.star
+    ADD CONSTRAINT star_galaxy_id_fkey FOREIGN KEY (galaxy_id) REFERENCES public.galaxy(galaxy_id);
 
 
 --
